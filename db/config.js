@@ -6,6 +6,12 @@ const DB_CONFIG = {
   password: process.env.DB_PASS,
   host: process.env.DB_HOST || "localhost",
   dialect: process.env.DB_DIALECT || "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // allows self-signed SSL certificates
+    },
+  },
   define: {
     timestamps: true,
   },
