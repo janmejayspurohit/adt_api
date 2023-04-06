@@ -128,16 +128,6 @@ async function main() {
     await OrderSalesFactTable.bulkCreate(orderSalesFactTableData);
 
     console.log("Data has been seeded into the db!");
-
-    const modelsDirPath = path.join(__dirname, "db/models");
-    if (!fs.existsSync(modelsDirPath)) {
-      fs.mkdirSync(modelsDirPath);
-    }
-    fs.writeFileSync(path.join(modelsDirPath, "OrderSalesRaw.js"), OrderSalesRaw.toString());
-    fs.writeFileSync(path.join(modelsDirPath, "CustomerDimension.js"), CustomerDimension.toString());
-    fs.writeFileSync(path.join(modelsDirPath, "ProductDimension.js"), ProductDimension.toString());
-    fs.writeFileSync(path.join(modelsDirPath, "OrderSalesFactTable.js"), OrderSalesFactTable.toString());
-    console.log("Models added to folder!");
   } catch (err) {
     console.error(err);
   } finally {
