@@ -1,11 +1,9 @@
-import { errorResponse } from "../helpers";
-import { User } from "../../db/models";
-
 const jwt = require("jsonwebtoken");
+const { HttpBadRequest } = require("../helpers/http.error");
 
 const apiAuth = async (req, res, next) => {
   if (!(req.headers && req.headers["x-token"])) {
-    return errorResponse(req, res, "Token is not provided", 401);
+    throw new HttpBadRequest("Token is not provided");
   }
   const token = req.headers["x-token"];
   try {
@@ -15,15 +13,14 @@ const apiAuth = async (req, res, next) => {
       where: { email: req.user.email },
     });
     if (!user) {
-      return errorResponse(req, res, "User is not found in system", 401);
+      throw new HttpBadRequest("User is not found in system");
     }
     const reqUser = { ...user.get() };
     reqUser.userId = user.id;
     req.user = reqUser;
     return next();
   } catch (error) {
-    return errorResponse(req, res, "Incorrect token is provided, try re-login", 401);
+    throw new HttpBadRequest("Incorrect token is provided, try re-login");
   }
 };
-
-export default apiAuth;
+module.exports = apiAuth;

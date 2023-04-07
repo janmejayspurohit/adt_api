@@ -1,8 +1,8 @@
-import express from "express";
-import validate from "../middleware/validate";
+const express = require("express");
+const validate = require("../middleware/validate");
 
-import * as userController from "../controllers/user/user.controller";
-import * as userValidator from "../controllers/user/user.validator";
+const userController = require("../controllers/user/user.controller");
+const userValidator = require("../controllers/user/user.validator");
 
 const router = express.Router();
 

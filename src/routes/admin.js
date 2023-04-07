@@ -1,11 +1,10 @@
-import express from "express";
-import * as userController from "../controllers/user/user.controller";
+const express = require("express");
 
 const router = express.Router();
 
 //= ===============================
 // Admin routes
 //= ===============================
-router.get("/allUsers", userController.allUsers);
+// router.get("/allUsers", userController.allUsers);
 
 module.exports = router;

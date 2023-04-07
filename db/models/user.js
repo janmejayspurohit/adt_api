@@ -1,6 +1,22 @@
+const { Model } = require("sequelize");
+const bcrypt = require("bcryptjs");
+
 module.exports = (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    "User",
+  class User extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate() {}
+
+    async isPasswordMatch(password) {
+      console.log("🚀 -> file: user.js:14 -> password:", password)
+      return bcrypt.compareSync(password, this.password);
+    }
+  }
+
+  User.init(
     {
       firstName: {
         type: DataTypes.STRING,
@@ -41,10 +57,9 @@ module.exports = (sequelize, DataTypes) => {
           attributes: { include: ["password", "verifyToken", "isAdmin"] },
         },
       },
+      sequelize,
+      modelName: "User",
     }
   );
-  User.associate = function (models) {
-    // associations can be defined here
-  };
   return User;
 };

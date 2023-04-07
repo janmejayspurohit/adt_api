@@ -1,10 +1,9 @@
-import { Router } from "express";
-import healthCheckRoutes from "./healthCheck";
-import publicRoutes from "./public";
-import apiRoutes from "./api";
-import adminRoutes from "./admin";
-import apiMiddleware from "../middleware/apiAuth";
-import adminMiddleware from "../middleware/adminAuth";
+const Router = require("express");
+const healthCheckRoutes = require("./healthCheck");
+const publicRoutes = require("./public");
+const apiRoutes = require("./api");
+const adminRoutes = require("./admin");
+const apiMiddleware = require("../middleware/apiAuth");
 
 const router = Router();
 
@@ -27,7 +26,7 @@ const defaultRoutes = [
   {
     path: "/api/admin",
     route: adminRoutes,
-    middlewares: [apiMiddleware, adminMiddleware],
+    middlewares: [apiMiddleware],
   },
 ];
 
@@ -35,4 +34,4 @@ defaultRoutes.forEach((route) => {
   router.use(route.path, ...route.middlewares, route.route);
 });
 
-export default router;
+module.exports = router;
