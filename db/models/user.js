@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
     static associate() {}
 
     async isPasswordMatch(password) {
-      console.log("🚀 -> file: user.js:14 -> password:", password)
       return bcrypt.compareSync(password, this.password);
     }
   }

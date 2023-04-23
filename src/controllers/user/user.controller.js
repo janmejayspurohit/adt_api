@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-const axios = require("axios");
 const { User } = require("../../../db/models");
 const { uniqueId } = require("../../helpers");
 const { hashPassword } = require("../../helpers/password");
@@ -9,7 +8,7 @@ const catchAsync = require("../../helpers/catchAsync");
 const ApiError = require("../../helpers/ApiError");
 const httpStatus = require("http-status");
 
-const register = async (req, res, next) => {
+const register = catchAsync(async (req, res, next) => {
   const { email, password, firstName, lastName } = req.body;
 
   const user = await User.findOne({ where: { email } });
@@ -28,7 +27,7 @@ const register = async (req, res, next) => {
 
   const newUser = await User.create(payload);
   next(new AppResponse({ data: newUser }));
-};
+});
 
 const login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
