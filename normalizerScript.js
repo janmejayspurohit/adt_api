@@ -85,47 +85,76 @@ async function main() {
 
     const csvRows = csvData.split("\n");
     const headers = csvRows.shift().split(",");
-    const data = csvRows.slice(1).map((row) => {
-      const values = row.split(",");
-      const obj = {};
-      headers.forEach((header, index) => {
-        if (values[index]) obj[columns[header]] = values[index];
-      });
-      return obj;
-    });
 
     await sequelize.sync({ force: true });
 
     await OrderSalesRaw.sync();
 
-    await OrderSalesRaw.bulkCreate(data);
+    const chunkSize = 1000;
+    for (let i = 0; i < csvRows.length; i += chunkSize) {
+      const chunk = csvRows.slice(i, i + chunkSize);
+      const data = chunk.map((row) => {
+        const values = row.split(",");
+        const obj = {};
+        headers.forEach((header, index) => {
+          if (values[index]) obj[columns[header]] = values[index];
+        });
+        return obj;
+      });
+
+      await OrderSalesRaw.bulkCreate(data);
+    }
 
     await CustomerDimension.sync();
 
-    const customerDimensionData = data.map((row) => {
-      const { customerId, customerName, segment, country, city, state, postalCode, region } = row;
-      return { customerId, customerName, segment, country, city, state, postalCode, region };
-    });
+    for (let i = 0; i < csvRows.length; i += chunkSize) {
+      const chunk = csvRows.slice(i, i + chunkSize);
+      const data = chunk.map((row) => {
+        const values = row.split(",");
+        const rowObj = {};
+        Object.keys(columns).forEach((header, index) => {
+          if (values[index]) rowObj[columns[header]] = values[index];
+        });
+        const { customerId, customerName, segment, country, city, state, postalCode, region } = rowObj;
+        return { customerId, customerName, segment, country, city, state, postalCode, region };
+      });
 
-    await CustomerDimension.bulkCreate(customerDimensionData);
+      await CustomerDimension.bulkCreate(data);
+    }
 
     await ProductDimension.sync();
 
-    const productDimensionData = data.map((row) => {
-      const { productId, productName, category, subCategory } = row;
-      return { productId, productName, category, subCategory };
-    });
+    for (let i = 0; i < csvRows.length; i += chunkSize) {
+      const chunk = csvRows.slice(i, i + chunkSize);
+      const data = chunk.map((row) => {
+        const values = row.split(",");
+        const rowObj = {};
+        Object.keys(columns).forEach((header, index) => {
+          if (values[index]) rowObj[columns[header]] = values[index];
+        });
+        const { productId, productName, category, subCategory } = rowObj;
+        return { productId, productName, category, subCategory };
+      });
 
-    await ProductDimension.bulkCreate(productDimensionData);
+      await ProductDimension.bulkCreate(data);
+    }
 
     await OrderSalesFactTable.sync();
 
-    const orderSalesFactTableData = data.map((row) => {
-      const { rowId, orderId, productId, productName, customerId, postalCode, orderDate, shipDate, shipMode, sales } = row;
-      return { rowId, orderId, productId, productName, customerId, postalCode, orderDate, shipDate, shipMode, sales };
-    });
+    for (let i = 0; i < csvRows.length; i += chunkSize) {
+      const chunk = csvRows.slice(i, i + chunkSize);
+      const data = chunk.map((row) => {
+        const values = row.split(",");
+        const rowObj = {};
+        Object.keys(columns).forEach((header, index) => {
+          if (values[index]) rowObj[columns[header]] = values[index];
+        });
+        const { rowId, orderId, productId, productName, customerId, postalCode, orderDate, shipDate, shipMode, sales } = rowObj;
+        return { rowId, orderId, productId, productName, customerId, postalCode, orderDate, shipDate, shipMode, sales };
+      });
 
-    await OrderSalesFactTable.bulkCreate(orderSalesFactTableData);
+      await OrderSalesFactTable.bulkCreate(data);
+    }
 
     console.log("Data has been seeded into the db!");
   } catch (err) {
