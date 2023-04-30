@@ -49,11 +49,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       defaultScope: {
-        attributes: { exclude: ["password", "verifyToken", "isAdmin"] },
+        attributes: { exclude: ["password", "verifyToken"] },
       },
       scopes: {
         withSecretColumns: {
-          attributes: { include: ["password", "verifyToken", "isAdmin"] },
+          attributes: { include: ["password", "verifyToken"] },
         },
       },
       sequelize,

@@ -12,5 +12,6 @@ const router = express.Router();
 
 router.post("/login", validate(userValidator.login), userController.login);
 router.post("/register", validate(userValidator.register), userController.register);
+router.post("/forgotPassword", validate(userValidator.changePassword), userController.changePassword);
 
 module.exports = router;

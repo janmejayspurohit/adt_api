@@ -8,8 +8,8 @@ const getOtherUserProfile = {
 
 const changePassword = {
   body: {
-    oldPassword: Joi.string().required(),
     newPassword: Joi.string().required(),
+    email: Joi.string().email().required(),
   },
 };
 

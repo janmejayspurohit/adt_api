@@ -52,37 +52,38 @@ const login = catchAsync(async (req, res, next) => {
   next(new AppResponse({ data }));
 });
 
-// const profile = async (req, res) => {
-//   try {
-//     const { userId } = req.user;
-//     const user = await User.findOne({ where: { id: userId } });
-//     return successResponse(req, res, { user });
-//   } catch (error) {
-//     return errorResponse(req, res, error.message);
-//   }
-// };
+const changePassword = catchAsync(async (req, res, next) => {
+  const newPass = await hashPassword(req.body.newPassword);
+  await User.update({ password: newPass }, { where: { email: req.body.email } });
+  next(new AppResponse({ data: { message: "Password changed successfully" } }));
+});
 
-// const changePassword = async (req, res) => {
-//   try {
-//     const { userId } = req.user;
-//     const user = await User.scope("withSecretColumns").findOne({
-//       where: { id: userId },
-//     });
-//     const reqPass = await hashPassword(req.body.oldPassword);
-//     if (reqPass !== user.password) {
-//       throw new Error("Old password is incorrect");
-//     }
+const allUsers = catchAsync(async (req, res, next) => {
+  const users = await User.findAll({
+    order: [["createdAt", "DESC"]],
+  });
+  next(new AppResponse({ data: users }));
+});
 
-//     const newPass = await hashPassword(req.body.newPassword);
+const updateUsers = catchAsync(async (req, res, next) => {
+  const body = req.body;
+  body.users.map(async (user) => {
+    await User.update({ isAdmin: user.isAdmin }, { where: { id: user.id } });
+  });
+  next(new AppResponse({ data: { message: "Users updated successfully" } }));
+});
 
-//     await User.update({ password: newPass }, { where: { id: user.id } });
-//     return successResponse(req, res, {});
-//   } catch (error) {
-//     return errorResponse(req, res, error.message);
-//   }
-// };
+const deleteUser = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  await User.destroy({ where: { id } });
+  next(new AppResponse({ data: { message: "User deleted successfully" } }));
+});
 
 module.exports = {
   login,
   register,
+  changePassword,
+  allUsers,
+  updateUsers,
+  deleteUser,
 };
